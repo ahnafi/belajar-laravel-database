@@ -19,6 +19,7 @@ class QueryBuilderTest extends TestCase
     {
         parent::setUp();
         DB::delete("delete from categories");
+//        DB::delete("delete from counters");
     }
 
     function testQueryBuilderInsert()
@@ -139,6 +140,62 @@ class QueryBuilderTest extends TestCase
         for ($i = 0; $i < count($collection); $i++) {
             Log::info(json_encode($collection[$i]));
         }
+    }
+
+    function testQueryBuilderUpdate()
+    {
+        $this->insertCategories();
+
+        DB::table("categories")->where("id", "=", "SMARTPHONE")->update([
+            "name" => "handphone"
+        ]);
+
+        $collection = DB::table("categories")->where("id", "=", "SMARTPHONE")->get();
+
+        self::assertEquals("handphone", $collection[0]->name);
+        self::assertNotSame("SMARTPHONE", $collection[0]->name);
+
+        self::assertCount(1, $collection);
+        for ($i = 0; $i < count($collection); $i++) {
+            Log::info(json_encode($collection[$i]));
+        }
+    }
+
+    function testQueryBuilderUpdateOrInsert()
+    {
+        $this->insertCategories();
+
+        DB::table("categories")->updateOrInsert([
+            "id" => "VOUCHER",
+        ], [
+            "name" => "VOUCHER",
+            "description" => "VOUCHER",
+            "created_at" => "2025-01-01 00:00:00",
+        ]);
+
+        $collection = DB::table("categories")->where("id", "=", "VOUCHER")->get();
+
+        self::assertEquals("VOUCHER", $collection[0]->name);
+        self::assertCount(1, $collection);
+
+        for ($i = 0; $i < count($collection); $i++) {
+            Log::info(json_encode($collection[$i]));
+        }
+
+    }
+
+    function testQueryBuilderUpdateIncrement()
+    {
+        DB::table("counters")->where("id", "=", "sample")->increment("counter", 1);
+
+        $collection = DB::table("counters")->where("id", "=", "sample")->get();
+
+//        self::assertEquals(1, $collection[0]->counter);
+        self::assertCount(1, $collection);
+        for ($i = 0; $i < count($collection); $i++) {
+            Log::info(json_encode($collection[$i]));
+        }
+
     }
 
 }
