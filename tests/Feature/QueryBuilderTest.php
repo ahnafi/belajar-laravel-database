@@ -291,4 +291,15 @@ class QueryBuilderTest extends TestCase
 
     }
 
+    function testQueryBuilderLazyResult()
+    {
+        $this->insertTableProduct();
+
+        DB::table("categories")->orderBy("id")
+            ->lazy(1)->each(function ($item) {
+                self::assertNotNull($item);
+                Log::info(json_encode($item));
+            });
+    }
+
 }
