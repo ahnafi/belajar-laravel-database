@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 use function Laravel\Prompts\table;
 use function PHPUnit\Framework\assertCount;
+use function PHPUnit\Framework\assertNotNull;
 
 class QueryBuilderTest extends TestCase
 {
@@ -301,5 +302,19 @@ class QueryBuilderTest extends TestCase
                 Log::info(json_encode($item));
             });
     }
+
+    function testQueryBuilderCursorResult()
+    {
+        $this->insertTableProduct();
+
+        DB::table("categories")->orderBy("id")
+            ->cursor()
+            ->each(function ($item) {
+                self::assertNotNull($item);
+                Log::info(json_encode($item));
+            });
+    }
+
+
 
 }
