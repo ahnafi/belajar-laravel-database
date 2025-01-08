@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 use function Laravel\Prompts\table;
+use function PHPUnit\Framework\assertCount;
 
 class QueryBuilderTest extends TestCase
 {
@@ -272,5 +273,22 @@ class QueryBuilderTest extends TestCase
         }
     }
 
+
+    function testQueryBuilderChunkResult()
+    {
+
+        $this->insertTableProduct();
+
+        DB::table("categories")
+            ->orderBy("id")
+            ->chunk(1, function ($collection) {
+                self::assertNotNull($collection);
+
+                foreach ($collection as $item) {
+                    Log::info(json_encode($item));
+                }
+            });
+
+    }
 
 }
