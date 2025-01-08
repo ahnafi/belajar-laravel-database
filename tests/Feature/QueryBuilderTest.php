@@ -18,9 +18,9 @@ class QueryBuilderTest extends TestCase
     function setUp(): void
     {
         parent::setUp();
+        DB::table("products")->delete();
         DB::delete("delete from categories");
         DB::delete("delete from counters");
-        DB::table("products")->delete();
     }
 
     function testQueryBuilderInsert()
@@ -234,7 +234,7 @@ class QueryBuilderTest extends TestCase
 
         $collection = DB::table("products")->join(
             "categories", "products.category_id", "=", "categories.id"
-        )->select("products.id", "categories.name"
+        )->select("products.id", "products.name"
             , "categories.name as category_name", "products.price as price")->get();
 
         self::assertCount(2, $collection);
@@ -244,6 +244,21 @@ class QueryBuilderTest extends TestCase
 
     }
 
+    function testQueryBuilderOrdering()
+    {
+        $this->insertTableProduct();
+
+        $collection = DB::table("products")->
+        orderBy("price", "desc")->
+        orderBy("name", "asc")->
+        get();
+
+        self::assertCount(2, $collection);
+        for ($i = 0; $i < count($collection); $i++) {
+            Log::info(json_encode($collection[$i]));
+        }
+
+    }
 
 
 }
