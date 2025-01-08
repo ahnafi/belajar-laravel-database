@@ -20,7 +20,7 @@ class QueryBuilderTest extends TestCase
         parent::setUp();
         DB::table("products")->delete();
         DB::delete("delete from categories");
-        DB::delete("delete from counters");
+//        DB::delete("delete from counters");
     }
 
     function testQueryBuilderInsert()
@@ -258,6 +258,18 @@ class QueryBuilderTest extends TestCase
             Log::info(json_encode($collection[$i]));
         }
 
+    }
+
+    function testQueryBuilderTakeSkip()
+    {
+        $this->insertCategories();
+
+        $collection = DB::table("categories")->skip(2)->take(2)->get();
+
+        self::assertCount(2, $collection);
+        for ($i = 0; $i < count($collection); $i++) {
+            Log::info(json_encode($collection[$i]));
+        }
     }
 
 
