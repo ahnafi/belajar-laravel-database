@@ -459,4 +459,17 @@ class QueryBuilderTest extends TestCase
         }
     }
 
+    function testSeeding()
+    {
+        $this->seed(CategorySeeder::class);
+
+        $collection = DB::table("categories")->get();
+        self::assertCount(4, $collection);
+
+        for ($i = 0; $i < count($collection); $i++) {
+            self::assertnotnull($collection[$i]);
+            Log::info(json_encode($collection[$i]));
+        }
+    }
+
 }
